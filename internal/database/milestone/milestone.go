@@ -5,6 +5,7 @@ import (
 
 	"gorm.io/gorm"
 
+	"projects/internal/database/processes"
 	"projects/internal/database/stage"
 )
 
@@ -55,6 +56,9 @@ type MilestoneEntity struct {
 	Hidden       bool   `gorm:"column:hidden;default:false"`
 	Title        string `gorm:"column:title"`
 	AssignID     string `gorm:"column:assign_id"`
+
+	Process   processes.ProcessEntity
+	ProcessID int64 `gorm:"process_id"`
 }
 
 func (MilestoneEntity) TableName() string {

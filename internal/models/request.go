@@ -7,7 +7,6 @@ type ProjectReq struct {
 	Type            *string `json:"type"`
 	BusinessOwner   *string `json:"business_owner"`
 	Stage           *string `json:"stage"`
-	Phase           *string `json:"phase"`
 	LegacyEntity    *string `json:"legacy_entity"`
 	Cluster         *string `json:"cluster"`
 	OwnerID         *string `json:"owner_id"`
@@ -35,4 +34,10 @@ type ActionPlan struct {
 	WorkspaceID int64  `json:"workspace_id"`
 	ProjectID   int64  `json:"project_id"`
 	Status      string `json:"status"`
+	PhaseID     int64  `json:"phase_id"`
+}
+
+type ProcessReq struct {
+	ProcessID int64  `json:"process_id"`
+	Name      string `json:"name"`
 }

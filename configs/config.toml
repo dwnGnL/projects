@@ -1,0 +1,16 @@
+# 
+# When you change the structure of the configuration file,
+# make sure the same changes need to be made to `config.go`
+
+[Main]
+Port = "8081"
+Name = "Microservice"
+
+[DB]
+Host     = "localhost"
+Port     = "5432"
+User     =  "postgres"
+Password =  "1234"
+Database =  "pmt"
+SSlMode  =  "disable"
+

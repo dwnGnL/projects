@@ -10,7 +10,7 @@ type ProjectResp struct {
 	LegacyEntity    string           `json:"legacy_entity"`
 	Cluster         string           `json:"cluster"`
 	Stage           string           `json:"stage"`
-	Phase           string           `json:"phase"`
+	Phase           []Phase          `json:"phase"`
 	OwnerID         string           `json:"owner_id"`
 	OwnerPhoto      string           `json:"owner_photo"`
 	Hidden          int64            `json:"hidden"`
@@ -26,6 +26,11 @@ type ProjectResp struct {
 
 type ProjectTemplate struct {
 	Stage []Stage `json:"stage"`
+}
+
+type Phase struct {
+	ID   int64  `json:"id,omitempty"`
+	Name string `json:"name,omitempty"`
 }
 
 type Stage struct {
@@ -60,6 +65,7 @@ type Milestone struct {
 	AssignID    string         `json:"assign_id"`
 	Epic        []EpicResponse `json:"epic,omitempty"`
 	Task        []Task         `json:"task,omitempty"`
+	ProcessID   int64          `json:"process_id"`
 }
 
 type ActionPlanResp struct {
@@ -69,4 +75,10 @@ type ActionPlanResp struct {
 	Title        string  `json:"title"`
 	Created      int64   `json:"created"`
 	Status       string  `json:"status"`
+	PhaseID      int64   `json:"phase_id"`
+}
+
+type ProcessResp struct {
+	ProcessID int64  `json:"process_id"`
+	Name      string `json:"name"`
 }

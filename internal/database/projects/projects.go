@@ -4,28 +4,7 @@ import (
 	"time"
 
 	"database/sql/driver"
-
 	"gorm.io/gorm"
-)
-
-type Phase string
-
-func (p *Phase) Scan(value interface{}) error {
-	*p = Phase(value.(string))
-	return nil
-}
-
-func (p Phase) Value() (driver.Value, error) {
-	return string(p), nil
-}
-
-func (p *Phase) String() string {
-	return string(*p)
-}
-
-const (
-	BuildingLaunch Phase = "building&launch"
-	ScaleGrowth    Phase = "scale&growth"
 )
 
 type Stage string
@@ -109,8 +88,17 @@ func (c *Category) String() string {
 	return string(*c)
 }
 
+type PhaseEntity struct {
+	PhaseID int64  `gorm:"column:phase_id;primary_key;autoIncrement"`
+	Name    string `gorm:"column:name"`
+
+	Projects []*ProjectEntity `gorm:"many2many:project_phases;"`
+}
+
 type ProjectEntity struct {
-	ProjectID       int64    `gorm:"column:project_id;primary_key;autoIncrement"`
+	ProjectID int64          `gorm:"column:project_id;primary_key;autoIncrement"`
+	Phases    []*PhaseEntity `gorm:"many2many:project_phases;"`
+
 	Title           string   `gorm:"column:title"`
 	Description     string   `gorm:"column:description"`
 	MediaID         int64    `gorm:"column:media_id"`
@@ -119,7 +107,6 @@ type ProjectEntity struct {
 	LegacyEntity    string   `gorm:"column:legacy_entity"`
 	Cluster         string   `gorm:"column:cluster"`
 	Stage           Stage    `gorm:"type:enum_stages;default:'ideation'"`
-	Phase           Phase    `gorm:"type:enum_phases;default:'building&launch'"`
 	OwnerID         string   `gorm:"column:owner_id"`
 	Hidden          int64    `gorm:"column:hidden"`
 	Category        Category `gorm:"type:category;default:'project'"`
@@ -135,7 +122,7 @@ func (ProjectEntity) TableName() string {
 	return "projects"
 }
 
-func (p *ProjectEntity) BeforeCreate(tx *gorm.DB) (err error) {
+func (p *ProjectEntity) BeforeCreate(_ *gorm.DB) (err error) {
 	p.Created = time.Now().Unix()
 	return
 }
@@ -146,6 +133,8 @@ type ProjectsInter interface {
 	Create(ProjectEntity) (ProjectEntity, error)
 	Update(id int64, updateColumns map[string]interface{}) (ProjectEntity, error)
 	Delete(id int64) error
+
+	GetPhase(entity *PhaseEntity) error
 }
 
 type projects struct {
@@ -219,4 +208,8 @@ func (p projects) Delete(id int64) error {
 	}
 
 	return nil
+}
+
+func (p projects) GetPhase(phase *PhaseEntity) error {
+	return p.db.Where("phase_id = ? OR name = ?", phase.PhaseID, phase.Name).First(phase).Error
 }

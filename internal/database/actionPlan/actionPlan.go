@@ -1,10 +1,13 @@
 package actionPlan
 
 import (
-	"database/sql/driver"
 	"time"
 
+	"database/sql/driver"
+
 	"gorm.io/gorm"
+
+	"projects/internal/database/projects"
 )
 
 type ActionStatus string
@@ -43,13 +46,16 @@ type ActionPlanEntity struct {
 	Title        string       `gorm:"column:title"`
 	Created      int64        `gorm:"column:created"`
 	Status       ActionStatus `gorm:"column:status;type:enum_ac_status;default:'active'"`
+
+	Phase   projects.PhaseEntity
+	PhaseID int64 `gorm:"column:phase_id, omitempty"`
 }
 
 func (ActionPlanEntity) TableName() string {
 	return "action_plan"
 }
 
-func (a *ActionPlanEntity) BeforeCreate(tx *gorm.DB) (err error) {
+func (a *ActionPlanEntity) BeforeCreate(_ *gorm.DB) (err error) {
 	a.Created = time.Now().Unix()
 	return
 }
